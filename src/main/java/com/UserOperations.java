@@ -18,6 +18,7 @@ public class UserOperations {
      возвращает мапу с данными: имя, пароль, имэйл
      если регистрация не удалась, возвращает пустую мапу
      */
+
     public Map<String, String> register() {
 
         // с помощью библиотеки RandomStringUtils генерируем имэйл
