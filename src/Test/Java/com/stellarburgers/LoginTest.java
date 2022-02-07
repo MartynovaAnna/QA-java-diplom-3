@@ -1,6 +1,7 @@
 package com.stellarburgers;
 
 import com.Base;
+import com.codeborne.selenide.Configuration;
 import com.model.Tokens;
 import com.model.UserRegisterResponse;
 import com.stellarburgers.page.ForgotPasswordPage;
@@ -31,10 +32,30 @@ public class LoginTest {
     String testPassword = RandomStringUtils.randomAlphabetic(10);
 
     @Before
-    public void before(){System.setProperty("webdriver.chrome.driver", "src/resources/yandexdriver.exe");}
+    public void before() {
+        System.setProperty("webdriver.chrome.driver", "src/resources/yandexdriver.exe");
+        Configuration.startMaximized = true;
+    }
 
     @After
-    public void after(){closeWebDriver();}
+    public void delete() {
+        if (Tokens.getAccessToken() == null) {
+            return;
+        }
+        given()
+                .spec(Base.getBaseSpec())
+                .auth().oauth2(Tokens.getAccessToken())
+                .when()
+                .delete("auth/user")
+                .then()
+                .statusCode(202);
+    }
+
+
+    @After
+    public void after() {
+        closeWebDriver();
+    }
 
     @Test
     @DisplayName("Testing login from main page")
@@ -48,11 +69,9 @@ public class LoginTest {
         LoginPage loginPage = page(LoginPage.class);
         loginPage.loginUser(testEmail, testPassword);
 
-        String actualText = page.mainButtonBuns.getText();
+        String actualText = page.getBunsButtonText();
 
         Assert.assertThat(actualText, endsWith("Булки"));
-
-        delete();
     }
 
     @Test
@@ -66,11 +85,9 @@ public class LoginTest {
         LoginPage loginPage = page(LoginPage.class);
         loginPage.loginUser(testEmail, testPassword);
 
-        String actualText = page.mainButtonBuns.getText();
+        String actualText = page.getBunsButtonText();
 
         Assert.assertThat(actualText, endsWith("Булки"));
-
-        delete();
     }
 
     @Test
@@ -86,11 +103,9 @@ public class LoginTest {
 
         MainPage mainPage = page(MainPage.class);
 
-        String actualText = mainPage.mainButtonBuns.getText();
+        String actualText = mainPage.getBunsButtonText();
 
         Assert.assertThat(actualText, endsWith("Булки"));
-
-        delete();
     }
 
     @Test
@@ -106,12 +121,9 @@ public class LoginTest {
 
         MainPage mainPage = page(MainPage.class);
 
-        String actualText = mainPage.mainButtonBuns.getText();
+        String actualText = mainPage.getBunsButtonText();
 
         Assert.assertThat(actualText, endsWith("Булки"));
-
-        delete();
-
     }
 
     @Step("Create new user")
@@ -140,20 +152,5 @@ public class LoginTest {
             Tokens.setRefreshToken(response.getRefreshToken());
         }
         return responseData;
-    }
-
-    @Step("Delete user")
-
-    public void delete() {
-        if (Tokens.getAccessToken() == null) {
-            return;
-        }
-        given()
-                .spec(Base.getBaseSpec())
-                .auth().oauth2(Tokens.getAccessToken())
-                .when()
-                .delete("auth/user")
-                .then()
-                .statusCode(202);
     }
 }

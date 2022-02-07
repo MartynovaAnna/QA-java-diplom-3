@@ -1,6 +1,7 @@
 package com.stellarburgers;
 
 import com.Base;
+import com.codeborne.selenide.Configuration;
 import com.model.Tokens;
 import com.model.UserRegisterResponse;
 import com.stellarburgers.page.LoginPage;
@@ -24,18 +25,36 @@ import static org.hamcrest.CoreMatchers.endsWith;
 
 public class RegisterTest {
 
+
     public static final String EMAIL_POSTFIX = "@yandex.ru";
     String testName = RandomStringUtils.randomAlphabetic(10);
     String testEmail = RandomStringUtils.randomAlphabetic(10) + EMAIL_POSTFIX;
     String testPassword = RandomStringUtils.randomAlphabetic(10);
-    String incorrectPassword = RandomStringUtils.randomAlphabetic(5);
-
 
     @Before
-    public void before(){System.setProperty("webdriver.chrome.driver", "src/resources/yandexdriver.exe");}
+    public void before() {
+        System.setProperty("webdriver.chrome.driver", "src/resources/yandexdriver.exe");
+        Configuration.startMaximized = true;
+    }
 
     @After
-    public void after(){closeWebDriver();}
+    public void delete() {
+        if (Tokens.getAccessToken() == null) {
+            return;
+        }
+        given()
+                .spec(Base.getBaseSpec())
+                .auth().oauth2(Tokens.getAccessToken())
+                .when()
+                .delete("auth/user")
+                .then()
+                .statusCode(202);
+    }
+
+    @After
+    public void after() {
+        closeWebDriver();
+    }
 
 
     @Test
@@ -48,22 +67,10 @@ public class RegisterTest {
         LoginPage loginPage = page(LoginPage.class);
         $(loginPage.loginForgotPassword).shouldBe(visible);
 
-        String actualText = loginPage.loginButtonLogin.getText();
+        String actualText = loginPage.loginButtonGetText();
         Assert.assertThat(actualText, endsWith("Войти"));
 
         login();
-        delete();
-    }
-
-    @Test
-    @DisplayName("Testing registration with incorrect data")
-    @Description("This is the test for checking user registration with invalid data")
-    public void shouldNotRegisterWithIncorrectData() {
-        RegisterPage page = open("https://stellarburgers.nomoreparties.site/register", RegisterPage.class);
-        page.registerUser(testName, testEmail, incorrectPassword);
-        String actualText = page.registerTextError.getText();
-
-        Assert.assertThat(actualText, endsWith("Некорректный пароль"));
     }
 
     @Step("Login and get access token")
@@ -92,19 +99,4 @@ public class RegisterTest {
         }
         return responseData;
     }
-
-
-    @Step("Delete user")
-    public void delete() {
-        if (Tokens.getAccessToken() == null) {
-            return;
-        }
-        given()
-                .spec(Base.getBaseSpec())
-                .auth().oauth2(Tokens.getAccessToken())
-                .when()
-                .delete("auth/user")
-                .then()
-                .statusCode(202);
-    }
-    }
+}

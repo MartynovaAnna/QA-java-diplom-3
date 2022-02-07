@@ -1,6 +1,7 @@
 package com.stellarburgers;
 
 import com.Base;
+import com.codeborne.selenide.Configuration;
 import com.model.Tokens;
 import com.model.UserRegisterResponse;
 import com.stellarburgers.page.LoginPage;
@@ -28,13 +29,31 @@ public class RegisterChromeTest {
     String testName = RandomStringUtils.randomAlphabetic(10);
     String testEmail = RandomStringUtils.randomAlphabetic(10) + EMAIL_POSTFIX;
     String testPassword = RandomStringUtils.randomAlphabetic(10);
-    String incorrectPassword = RandomStringUtils.randomAlphabetic(5);
 
     @Before
-    public void driver(){System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");}
+    public void driver() {
+        System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");
+        Configuration.startMaximized = true;
+    }
 
     @After
-    public void after(){closeWebDriver();}
+    public void delete() {
+        if (Tokens.getAccessToken() == null) {
+            return;
+        }
+        given()
+                .spec(Base.getBaseSpec())
+                .auth().oauth2(Tokens.getAccessToken())
+                .when()
+                .delete("auth/user")
+                .then()
+                .statusCode(202);
+    }
+
+    @After
+    public void after() {
+        closeWebDriver();
+    }
 
 
     @Test
@@ -47,22 +66,10 @@ public class RegisterChromeTest {
         LoginPage loginPage = page(LoginPage.class);
         $(loginPage.loginForgotPassword).shouldBe(visible);
 
-        String actualText = loginPage.loginButtonLogin.getText();
+        String actualText = loginPage.loginButtonGetText();
         Assert.assertThat(actualText, endsWith("Войти"));
 
         login();
-        delete();
-    }
-
-    @Test
-    @DisplayName("Testing registration with incorrect data")
-    @Description("This is the test for checking user registration with invalid data")
-    public void shouldNotRegisterWithIncorrectData() {
-        RegisterPage page = open("https://stellarburgers.nomoreparties.site/register", RegisterPage.class);
-        page.registerUser(testName, testEmail, incorrectPassword);
-        String actualText = page.registerTextError.getText();
-
-        Assert.assertThat(actualText, endsWith("Некорректный пароль"));
     }
 
     @Step("Login and get access token")
@@ -91,19 +98,4 @@ public class RegisterChromeTest {
         }
         return responseData;
     }
-
-
-    @Step("Delete user")
-    public void delete() {
-        if (Tokens.getAccessToken() == null) {
-            return;
-        }
-        given()
-                .spec(Base.getBaseSpec())
-                .auth().oauth2(Tokens.getAccessToken())
-                .when()
-                .delete("auth/user")
-                .then()
-                .statusCode(202);
-    }
-    }
+}

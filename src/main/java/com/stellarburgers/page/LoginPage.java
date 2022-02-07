@@ -7,21 +7,24 @@ import org.openqa.selenium.support.How;
 
 public class LoginPage {
 
-    //Локатор поля "Email"
-    @FindBy(how = How.NAME,using = "name")
-    public SelenideElement loginFieldEmail;
-
-    //Локатор поля "Пароль"
-    @FindBy(how = How.NAME,using = "Пароль")
-    public SelenideElement loginFieldPassword;
-
-    //Локатор кнопки "Войти"
-    @FindBy(how = How.CLASS_NAME, using = "button_button__33qZ0")
-    public SelenideElement loginButtonLogin;
-
     //Локатор кнопки "Забыли пароль"
     @FindBy(how = How.XPATH, using = "//*[@href = '/forgot-password']")
     public SelenideElement loginForgotPassword;
+    //Локатор поля "Email"
+    @FindBy(how = How.NAME, using = "name")
+    private SelenideElement loginFieldEmail;
+    //Локатор поля "Пароль"
+    @FindBy(how = How.NAME, using = "Пароль")
+    private SelenideElement loginFieldPassword;
+    //Локатор кнопки "Войти"
+    @FindBy(how = How.CLASS_NAME, using = "button_button__33qZ0")
+    private SelenideElement loginButtonLogin;
+
+    //Метод для получения текста кнопки "Войти"
+    @Step("Get login button text")
+    public String loginButtonGetText() {
+        return loginButtonLogin.getText();
+    }
 
     //Метод для заполнения поля "Email"
     @Step("Set email field")
@@ -43,9 +46,9 @@ public class LoginPage {
 
     //Метод для заполнения полей страницы входа
     @Step("Set login page fields")
-    public void loginUser (String email, String password) {
+    public void loginUser(String email, String password) {
         setEmail(email);
         setPassword(password);
         clickLogin();
     }
-    }
+}

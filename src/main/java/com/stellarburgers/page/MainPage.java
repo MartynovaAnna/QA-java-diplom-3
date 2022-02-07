@@ -12,35 +12,59 @@ public class MainPage {
 
     //Локатор кнопки "Войти в аккаунт"
     @FindBy(how = How.CLASS_NAME, using = "button_button__33qZ0")
-    public SelenideElement mainButtonLogin;
+    private SelenideElement mainButtonLogin;
 
     //Локатор кнопки "Войти в личный кабинет"
     @FindBy(how = How.CLASS_NAME, using = "AppHeader_header__linkText__3q_va")
-    public SelenideElement mainButtonProfile;
+    private SelenideElement mainButtonProfile;
 
     //Локатор раздела "Булки"
-    @FindBy(how = How.XPATH,using = ".//div[span[text()='Булки']]")
-    public SelenideElement mainButtonBuns;
+    @FindBy(how = How.XPATH, using = ".//div[span[text()='Булки']]")
+    private SelenideElement mainButtonBuns;
 
     //Локатор раздела "Соусы"
-    @FindBy(how = How.XPATH,using = ".//div[span[text()='Соусы']]")
-    public SelenideElement mainButtonSauces;
+    @FindBy(how = How.XPATH, using = ".//div[span[text()='Соусы']]")
+    private SelenideElement mainButtonSauces;
 
     //Локатор раздела "Начинки"
-    @FindBy(how = How.XPATH,using = ".//div[span[text()='Начинки']]")
-    public SelenideElement mainButtonFillings;
+    @FindBy(how = How.XPATH, using = ".//div[span[text()='Начинки']]")
+    private SelenideElement mainButtonFillings;
 
     //Локатор заголовка "Булки"
-    @FindBy(how = How.XPATH,using = ".//h2[text()='Булки']")
-    public SelenideElement mainHeaderBun;
+    @FindBy(how = How.XPATH, using = ".//h2[text()='Булки']")
+    private SelenideElement mainHeaderBun;
 
     //Локатор заголовка "Соусы"
-    @FindBy(how = How.XPATH,using = ".//h2[text()='Соусы']")
-    public SelenideElement mainHeaderSauce;
+    @FindBy(how = How.XPATH, using = ".//h2[text()='Соусы']")
+    private SelenideElement mainHeaderSauce;
 
     //Локатор заголовка "Начинки"
-    @FindBy(how = How.XPATH,using = ".//h2[text()='Начинки']")
-    public SelenideElement mainHeaderFilling;
+    @FindBy(how = How.XPATH, using = ".//h2[text()='Начинки']")
+    private SelenideElement mainHeaderFilling;
+
+    //Метод для получения текста заголовка "Булки"
+    @Step("Get buns text")
+    public String getBunsText() {
+        return mainHeaderBun.getText();
+    }
+
+    //Метод для получения текста заголовка "Соусы"
+    @Step("Get sauces text")
+    public String getSaucesText() {
+        return mainHeaderSauce.getText();
+    }
+
+    //Метод для получения текста заголовка "Начинки"
+    @Step("Get fillings text")
+    public String getFillingsText() {
+        return mainHeaderFilling.getText();
+    }
+
+    //Метод для получения текста кнопки "Булки"
+    @Step("Get buns button text")
+    public String getBunsButtonText() {
+        return mainButtonBuns.getText();
+    }
 
 
     //Метод для клика на кнопку "Войти в аккаунт"
@@ -53,7 +77,8 @@ public class MainPage {
     @Step("Click profile button")
     public void clickButtonProfile() {
         SelenideElement mainButtonProfile = $$(byClassName("AppHeader_header__linkText__3q_va")).get(2);
-        mainButtonProfile.click(); }
+        mainButtonProfile.click();
+    }
 
     //Метод для клика по кнопке "Булки"
     @Step("Click buns button")

@@ -1,6 +1,7 @@
 package com.stellarburgers;
 
 import com.Base;
+import com.codeborne.selenide.Configuration;
 import com.model.Tokens;
 import com.model.UserRegisterResponse;
 import com.stellarburgers.page.LoginPage;
@@ -31,10 +32,29 @@ public class ProfileChromeTest {
     String testPassword = RandomStringUtils.randomAlphabetic(10);
 
     @Before
-    public void driver(){System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");}
+    public void driver() {
+        System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");
+        Configuration.startMaximized = true;
+    }
 
     @After
-    public void after(){closeWebDriver();}
+    public void delete() {
+        if (Tokens.getAccessToken() == null) {
+            return;
+        }
+        given()
+                .spec(Base.getBaseSpec())
+                .auth().oauth2(Tokens.getAccessToken())
+                .when()
+                .delete("auth/user")
+                .then()
+                .statusCode(202);
+    }
+
+    @After
+    public void after() {
+        closeWebDriver();
+    }
 
     @Test
     @DisplayName("Testing profile page")
@@ -48,10 +68,9 @@ public class ProfileChromeTest {
         mainPage.clickButtonProfile();
 
         ProfilePage profilePage = page(ProfilePage.class);
-        String actualText = profilePage.profileText.getText();
+        String actualText = profilePage.getProfileText();
         Assert.assertThat(actualText, endsWith("персональные данные"));
 
-        delete();
     }
 
     @Test
@@ -68,11 +87,10 @@ public class ProfileChromeTest {
         ProfilePage profilePage = page(ProfilePage.class);
         profilePage.clickButtonConstructor();
 
-        String actualText = mainPage.mainButtonBuns.getText();
+        String actualText = mainPage.getBunsButtonText();
 
         Assert.assertThat(actualText, endsWith("Булки"));
 
-        delete();
     }
 
     @Test
@@ -89,11 +107,10 @@ public class ProfileChromeTest {
         ProfilePage profilePage = page(ProfilePage.class);
         profilePage.clickLogo();
 
-        String actualText = mainPage.mainButtonBuns.getText();
+        String actualText = mainPage.getBunsButtonText();
 
         Assert.assertThat(actualText, endsWith("Булки"));
 
-        delete();
     }
 
     @Test
@@ -111,10 +128,9 @@ public class ProfileChromeTest {
         profilePage.clickExit();
         $(loginPage.loginForgotPassword).shouldBe(visible);
 
-        String actualText = loginPage.loginButtonLogin.getText();
+        String actualText = loginPage.loginButtonGetText();
         Assert.assertThat(actualText, endsWith("Войти"));
 
-        delete();
     }
 
     @Step("Create new user")
@@ -143,20 +159,5 @@ public class ProfileChromeTest {
             Tokens.setRefreshToken(response.getRefreshToken());
         }
         return responseData;
-    }
-
-    @Step("Delete user")
-
-    public void delete() {
-        if (Tokens.getAccessToken() == null) {
-            return;
-        }
-        given()
-                .spec(Base.getBaseSpec())
-                .auth().oauth2(Tokens.getAccessToken())
-                .when()
-                .delete("auth/user")
-                .then()
-                .statusCode(202);
     }
 }

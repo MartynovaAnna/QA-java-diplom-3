@@ -11,28 +11,34 @@ import static com.codeborne.selenide.Selenide.$$;
 public class RegisterPage {
 
     //Локатор поля "Имя"
-    @FindBy(how = How.NAME,using = "name")
-    public SelenideElement registerFieldName;
+    @FindBy(how = How.NAME, using = "name")
+    private SelenideElement registerFieldName;
 
     //Локатор поля "Email"
-    @FindBy(how = How.NAME,using = "name")
-    public SelenideElement registerFieldEmail;
+    @FindBy(how = How.NAME, using = "name")
+    private SelenideElement registerFieldEmail;
 
     //Локатор поля "Пароль"
-    @FindBy(how = How.NAME,using = "Пароль")
-    public SelenideElement registerFieldPassword;
+    @FindBy(how = How.NAME, using = "Пароль")
+    private SelenideElement registerFieldPassword;
 
     //Локатор уведомления "Некорректный пароль"
     @FindBy(how = How.CLASS_NAME, using = "input__error")
-    public SelenideElement registerTextError;
+    private SelenideElement registerTextError;
 
     //Локатор кнопки "Зарегистрироваться"
     @FindBy(how = How.CLASS_NAME, using = "button_button__33qZ0")
-    public SelenideElement registerButtonRegister;
+    private SelenideElement registerButtonRegister;
 
     //Локатор кнопки "Войти"
     @FindBy(how = How.CLASS_NAME, using = "Auth_link__1fOlj")
-    public SelenideElement registerButtonLogin;
+    private SelenideElement registerButtonLogin;
+
+    //Метод для получения текста уведомления о неверном пароле
+    @Step("Get register error text")
+    public String getRegisterErrorText() {
+        return registerTextError.getText();
+    }
 
     //Метод для заполнения поля "Имя"
     @Step("Set name field")
@@ -61,7 +67,7 @@ public class RegisterPage {
 
     //Метод для заполнения полей страницы регистрации
     @Step("Set register page fields")
-    public void registerUser (String name, String email, String password) {
+    public void registerUser(String name, String email, String password) {
         setName(name);
         setEmail(email);
         setPassword(password);

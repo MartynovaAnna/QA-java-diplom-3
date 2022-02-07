@@ -1,5 +1,6 @@
 package com.stellarburgers;
 
+import com.codeborne.selenide.Configuration;
 import com.stellarburgers.page.MainPage;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
@@ -7,9 +8,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
-import org.openqa.selenium.chrome.ChromeOptions;
 
 import static com.codeborne.selenide.Selenide.*;
 import static org.hamcrest.CoreMatchers.endsWith;
@@ -17,10 +15,15 @@ import static org.hamcrest.CoreMatchers.endsWith;
 public class ConstructorChromeTest {
 
     @Before
-    public void driver(){System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");}
+    public void driver() {
+        System.setProperty("webdriver.chrome.driver", "src/resources/chromedriver.exe");
+        Configuration.startMaximized = true;
+    }
 
     @After
-    public void after(){closeWebDriver();}
+    public void after() {
+        closeWebDriver();
+    }
 
     @Test
     @DisplayName("Testing buns section")
@@ -31,7 +34,7 @@ public class ConstructorChromeTest {
         sleep(300);
         page.clickBuns();
 
-        String actualText = page.mainHeaderBun.getText();
+        String actualText = page.getBunsText();
 
         Assert.assertThat(actualText, endsWith("Булки"));
 
@@ -44,7 +47,7 @@ public class ConstructorChromeTest {
         MainPage page = open("https://stellarburgers.nomoreparties.site", MainPage.class);
         page.clickSauces();
 
-        String actualText = page.mainHeaderSauce.getText();
+        String actualText = page.getSaucesText();
 
         Assert.assertThat(actualText, endsWith("Соусы"));
 
@@ -57,9 +60,8 @@ public class ConstructorChromeTest {
         MainPage page = open("https://stellarburgers.nomoreparties.site", MainPage.class);
         page.clickFillings();
 
-        String actualText = page.mainHeaderFilling.getText();
+        String actualText = page.getFillingsText();
 
         Assert.assertThat(actualText, endsWith("Начинки"));
-
     }
 }

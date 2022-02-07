@@ -1,5 +1,6 @@
 package com.stellarburgers;
 
+import com.codeborne.selenide.Configuration;
 import com.stellarburgers.page.MainPage;
 import io.qameta.allure.Description;
 import io.qameta.allure.junit4.DisplayName;
@@ -14,10 +15,15 @@ import static org.hamcrest.CoreMatchers.endsWith;
 public class ConstructorTest {
 
     @Before
-    public void before(){System.setProperty("webdriver.chrome.driver", "src/resources/yandexdriver.exe");}
+    public void before() {
+        System.setProperty("webdriver.chrome.driver", "src/resources/yandexdriver.exe");
+        Configuration.startMaximized = true;
+    }
 
     @After
-    public void after(){closeWebDriver();}
+    public void after() {
+        closeWebDriver();
+    }
 
     @Test
     @DisplayName("Testing buns section")
@@ -28,7 +34,7 @@ public class ConstructorTest {
         sleep(300);
         page.clickBuns();
 
-        String actualText = page.mainHeaderBun.getText();
+        String actualText = page.getBunsText();
 
         Assert.assertThat(actualText, endsWith("Булки"));
 
@@ -41,7 +47,7 @@ public class ConstructorTest {
         MainPage page = open("https://stellarburgers.nomoreparties.site", MainPage.class);
         page.clickSauces();
 
-        String actualText = page.mainHeaderSauce.getText();
+        String actualText = page.getSaucesText();
 
         Assert.assertThat(actualText, endsWith("Соусы"));
 
@@ -54,7 +60,7 @@ public class ConstructorTest {
         MainPage page = open("https://stellarburgers.nomoreparties.site", MainPage.class);
         page.clickFillings();
 
-        String actualText = page.mainHeaderFilling.getText();
+        String actualText = page.getFillingsText();
 
         Assert.assertThat(actualText, endsWith("Начинки"));
 
